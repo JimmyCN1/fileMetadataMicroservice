@@ -4,6 +4,7 @@ var express = require("express");
 var bodyParser = require("body-parser");
 var cors = require("cors");
 var mongoose = require("mongoose");
+var File = require("./api/schemas/file");
 
 var multer = require("multer");
 var upload = multer({ dest: "./uploads" });
@@ -33,10 +34,22 @@ app.get("/", function(req, res) {
 
 app.post("/api/fileanalyse", upload.single("upfile"), (req, res) => {
   console.log(req.file);
-  res.json({
+  var file = new File({
     fileName: req.file.originalname,
     fileType: req.file.mimetype,
-    fileSize: `${req.file.size / 1000}KB`
+    fileSize: req.file.size
+  });
+  file.save((err, file) => {
+    if (err) {
+      console.log(err);
+      res.json(err);
+    } else {
+    }
+    res.json({
+      fileName: req.file.originalname,
+      fileType: req.file.mimetype,
+      fileSize: `${req.file.size / 1000}KB`
+    });
   });
 });
 
